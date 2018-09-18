@@ -31,6 +31,7 @@
     <!-- Sidebar Menu -->
     <ul class="sidebar-menu" data-widget="tree">
       <li class="header">MENU</li>
+      <li {{ (str_is('film.*', Route::currentRouteName()) ? 'class=active' : '') }}><a href="{{ route('film.index') }}"><i class="fa fa-list"></i> <span>Films</span></a></li>
     </ul>
     <!-- /.sidebar-menu -->
   </section>

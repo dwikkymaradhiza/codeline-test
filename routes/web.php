@@ -35,5 +35,9 @@ Route::prefix('admin')->namespace('Admin')->group(function () {
     // PROFILE
     Route::get('/profile/edit', ['as' => 'profile.edit', 'uses' => 'ProfileController@edit' ]);
     Route::put('/profile/edit', ['as' => 'profile.update', 'uses' => 'ProfileController@update' ]);
+
+    // FILM
+    Route::get('film/data', [ 'as' => 'film.data', 'uses' => 'FilmController@data']);
+    Route::resource('film', 'FilmController');
   });
 });
