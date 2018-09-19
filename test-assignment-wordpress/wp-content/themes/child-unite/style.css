@@ -11,3 +11,29 @@ Text Domain:	 child-unite
 /*
 Custom Style
 */
+.content-movie {
+  margin-bottom: 20px;
+}
+.list-movie a {
+  width: 100%;
+  color: #333;
+  text-decoration: none;
+}
+.list-movie img {
+  display: block;
+  margin: 10px auto;
+}
+.sidebar-movie ul li {
+  list-style: none;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.sidebar-movie img {
+  display: block;
+  max-width: none;
+  margin: 5px auto;
+}
+.sidebar-movie a {
+  text-decoration: none;
+  color: #333;
+}

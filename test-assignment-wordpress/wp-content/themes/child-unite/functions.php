@@ -6,11 +6,13 @@
 		add_action('init', 'custom_taxonomy_countries', 0);
 		add_action('init', 'custom_taxonomy_genres', 0);
 		add_action('init', 'custom_taxonomy_actors', 0);
+		add_action( 'manage_films_posts_custom_column' , 'custom_films_column', 10, 2 );
+		add_filter( 'manage_films_posts_columns', 'set_custom_edit_films_columns' );
 
 		function child_unite_enqueue_styles() {
- 			  wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' ); 
+ 			  wp_enqueue_style( 'hashone-parent-style', get_template_directory_uri() . '/style.css' ); 
 		} 
-
+		
 		// Register Custom Post Type
 		function custom_post_type_films() {
 			$labels = array(
@@ -65,7 +67,6 @@
 		}
 		
 		// Add the custom columns to the film post type
-		add_filter( 'manage_films_posts_columns', 'set_custom_edit_films_columns' );
 		function set_custom_edit_films_columns($columns) {
 				$columns['release_date'] = __( 'Release Date', 'release_date' );
 				$columns['ticket_price'] = __( 'Ticket Price', 'ticket_price' );
@@ -74,7 +75,6 @@
 		}
 
 		// Add the data to the custom columns for the film post type
-		add_action( 'manage_films_posts_custom_column' , 'custom_films_column', 10, 2 );
 		function custom_films_column( $column, $post_id ) {
 				switch ( $column ) {
 						case 'release_date' :
