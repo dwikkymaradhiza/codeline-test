@@ -3,7 +3,7 @@
 function shortcode_films_recent_posts( $atts = null, $content = null, $tag = null ) {
     $out = '';
     $args = array( 
-        'numberposts' => '6', 
+        'numberposts' => '5', 
         'post_status' => 'publish', 
         'post_type' => 'films' ,
     );
