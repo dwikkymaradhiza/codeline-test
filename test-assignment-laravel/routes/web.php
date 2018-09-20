@@ -12,15 +12,20 @@
 */
 
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return redirect()->route('films');
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/films', ['as' => 'films', 'uses' => 'FilmController@index']);
+Route::get('/films/{slug}', ['as' => 'films.detail', 'uses' => 'FilmController@show']);
 
 Route::prefix('admin')->namespace('Admin')->group(function () {
   // LOGIN
   Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm' ]);
   Route::post('login', [   'as' => '', 'uses' => 'Auth\LoginController@login']);
+
+  // REGISTRATION
+  Route::get('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@showRegistrationForm']);
+  Route::post('register', 'Auth\RegisterController@register');
 
   // PASSWORD RESET
   Route::post('password/email', [ 'as' => 'password.email', 'uses' => 'Auth\ForgotPasswordController@sendResetLinkEmail']);

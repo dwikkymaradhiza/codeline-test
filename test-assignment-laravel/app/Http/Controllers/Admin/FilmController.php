@@ -111,6 +111,7 @@ class FilmController extends Controller
           try {
             $film = new Film;
             $film->name = $request->name;
+            $film->slug = str_slug($request->name, '-');
             $film->description = $request->description;
             $film->rating = $request->rating;
             $film->ticket_price = $request->ticket_price;
@@ -203,7 +204,7 @@ class FilmController extends Controller
             if ($request->hasFile('photo') && $request->file('photo')->isValid()){
                 $oldPhotoPath = public_path('uploads/' . $film->photo);
                 $oldThumbnailPhotoPath = public_path('uploads/220_326_' . $film->photo);
-    
+                
                 $file = $request->file('photo');
                 $fileName = 'film-'. str_slug($request->name, '-') . '-' . date('YmdHis') . '.' . $file->getClientOriginalExtension();
     
@@ -217,6 +218,7 @@ class FilmController extends Controller
             }
 
             $film->name = $request->name;
+            $film->slug = str_slug($request->name, '-');
             $film->description = $request->description;
             $film->rating = $request->rating;
             $film->ticket_price = $request->ticket_price;
