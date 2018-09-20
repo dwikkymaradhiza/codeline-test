@@ -15,8 +15,13 @@ Route::get('/', function () {
     return redirect()->route('films');
 });
 
+// FILM
 Route::get('/films', ['as' => 'films', 'uses' => 'FilmController@index']);
 Route::get('/films/{slug}', ['as' => 'films.detail', 'uses' => 'FilmController@show']);
+
+// COMMENT
+Route::post('/comment', ['middleware' => 'auth', 'as' => 'films.comment', 'uses' => 'CommentController@store']);
+Route::get('/comments/{film_id}', ['as' => 'films.comment.index', 'uses' => 'CommentController@getCommentByFilm']);
 
 Route::prefix('admin')->namespace('Admin')->group(function () {
   // LOGIN
