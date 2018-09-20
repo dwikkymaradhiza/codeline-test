@@ -47,7 +47,7 @@
               <label for="permissions">Genres</label>
               @foreach($genres as $val)
                 <br />
-                <input id="{{ $val->name }}" class="minimal" type="checkbox" name="genres[]" value="{{ $val->id }}" /> <label for="{{ $val->name }}" style="font-weight: normal">{{ $val->name }}</label>
+                <input id="{{ $val->name }}" {!! (in_array($val->id, $film->genres->pluck('id')->toArray())) ? "checked='checked'" : "" !!} class="minimal" type="checkbox" name="genres[]" value="{{ $val->id }}" /> <label for="{{ $val->name }}" style="font-weight: normal">{{ $val->name }}</label>
               @endforeach
             </div>
           <div class="form-group">
@@ -70,8 +70,18 @@
             <p class="help-block">Format file allowed : png, jpg.</p>
           </div>
           <div class="form-group">
+            <label for="ticket_price">Ticket Price</label>
+            <input type="text" name="ticket_price" class="form-control" id="ticket_price" placeholder="Enter Ticket Price" value="{{ $film->ticket_price or old('ticket_price') }}">
+          </div>
+          <div class="form-group">
             <label for="rating">Rating</label>
-            <input type="number" name="rating" class="form-control" id="rating" value="{{ $film->rating or old('rating') }}">
+            <div>
+              <input type="radio" name="rating" value="1" class="minimal" {{ ((isset($film) && $film->rating == 1) or old('rating') == 1) ? 'checked' : '' }} /> 1&nbsp;&nbsp;
+              <input type="radio" name="rating" value="2" class="minimal" {{ ((isset($film) && $film->rating == 2) or old('rating') == 2) ? 'checked' : '' }}  /> 2&nbsp;&nbsp;
+              <input type="radio" name="rating" value="3" class="minimal" {{ ((isset($film) && $film->rating == 3) or old('rating') == 3) ? 'checked' : '' }}  /> 3&nbsp;&nbsp;
+              <input type="radio" name="rating" value="4" class="minimal" {{ ((isset($film) && $film->rating == 4) or old('rating') == 4) ? 'checked' : '' }}  /> 4&nbsp;&nbsp;
+              <input type="radio" name="rating" value="5" class="minimal" {{ ((isset($film) && $film->rating == 5) or old('rating') == 5) ? 'checked' : '' }}  /> 5
+            </div>
           </div>
           <div class="form-group">
             <label for="release_date">Release Date</label>

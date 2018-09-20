@@ -18,8 +18,8 @@ class CreateFilmsGenresTable extends Migration
             $table->unsignedInteger('genre_id');
 
             $table->increments('id');
-            $table->foreign('film_id')->references('id')->on('films');;
-            $table->foreign('genre_id')->references('id')->on('genres');
+            $table->foreign('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
             $table->timestamps();
         });
     }

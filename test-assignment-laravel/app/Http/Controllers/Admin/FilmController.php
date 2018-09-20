@@ -93,7 +93,52 @@ class FilmController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'description' => 'required',
+            'rating' => 'required',
+            'ticket_price' => 'required',
+            'photo' => 'required',
+            'release_date' => 'required',
+            'genres' => 'required'
+          ]);
+  
+          if ($validator->fails()) {
+              return redirect()->back()->withInput()->withErrors($validator);
+          }
+  
+          DB::beginTransaction();
+          try {
+            $film = new Film;
+            $film->name = $request->name;
+            $film->description = $request->description;
+            $film->rating = $request->rating;
+            $film->ticket_price = $request->ticket_price;
+            $film->created_by = Auth::id();
+            $film->release_date = Carbon::createFromFormat('m/d/Y', $request->release_date)->format('Y-m-d');
+  
+            if($request->hasFile('photo') && $request->file('photo')->isValid()){
+                $file = $request->file('photo');
+                $fileName = 'film-'. str_slug($request->name, '-') . '-' . date('YmdHis') . '.' . $file->getClientOriginalExtension();
+  
+                $thumbnailPath = public_path('uploads/220_326_' . $fileName);
+                Image::make($file->getRealPath())->fit(220, 326)->save($thumbnailPath);
+  
+                $originalPath = public_path('uploads/' . $fileName);
+                Image::make($file->getRealPath())->save($originalPath);
+  
+                $film->photo = $fileName;
+            }
+  
+            $film->save();
+            $film->genres()->attach($request->genres);
+  
+            DB::commit();
+            return redirect()->route('film.index')->with('status', 'Data saved successfully!');
+          } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+          }
     }
 
     /**
@@ -104,7 +149,12 @@ class FilmController extends Controller
      */
     public function show($id)
     {
-        
+        $film = Film::findOrFail($id);
+        if(!empty($film->release_date)) {
+            $film->release_date = Carbon::createFromFormat('Y-m-d', $film->release_date)->format('m/d/Y');
+        }
+
+        return view('admin-lte.film.detail', compact('film'));
     }
 
     /**
@@ -115,7 +165,14 @@ class FilmController extends Controller
      */
     public function edit($id)
     {
-        
+        $film = Film::findOrFail($id);
+        $genres = Genre::all();
+
+        if(!empty($film->release_date)) {
+            $film->release_date = Carbon::createFromFormat('Y-m-d', $film->release_date)->format('m/d/Y');
+        }
+
+        return view('admin-lte.film.form', compact('film', 'genres'));
     }
 
     /**
@@ -127,7 +184,62 @@ class FilmController extends Controller
      */
     public function update(Request $request, $id)
     {
-      
+          $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'description' => 'required',
+            'rating' => 'required',
+            'ticket_price' => 'required',
+            'release_date' => 'required',
+            'genres' => 'required'
+          ]);
+  
+          if ($validator->fails()) {
+              return redirect()->back()->withInput()->withErrors($validator);
+          }
+    
+          DB::beginTransaction();
+          try {
+            $film = Film::find($id);
+            if ($request->hasFile('photo') && $request->file('photo')->isValid()){
+                $oldPhotoPath = public_path('uploads/' . $film->photo);
+                $oldThumbnailPhotoPath = public_path('uploads/220_326_' . $film->photo);
+    
+                $file = $request->file('photo');
+                $fileName = 'film-'. str_slug($request->name, '-') . '-' . date('YmdHis') . '.' . $file->getClientOriginalExtension();
+    
+                $thumbnailPath = public_path('uploads/220_326_' . $fileName);
+                Image::make($file->getRealPath())->fit(220, 326)->save($thumbnailPath);
+    
+                $originalPath = public_path('uploads/' . $fileName);
+                Image::make($file->getRealPath())->save($originalPath);
+    
+                $film->photo = $fileName;
+            }
+
+            $film->name = $request->name;
+            $film->description = $request->description;
+            $film->rating = $request->rating;
+            $film->ticket_price = $request->ticket_price;
+            $film->release_date = Carbon::createFromFormat('m/d/Y', $request->release_date)->format('Y-m-d');
+
+            if (!empty($request->genres)) {
+                $film->genres()->sync([]);
+                $film->genres()->attach($request->genres);
+            }
+
+            $film->save();
+
+            DB::commit();
+            if (isset($oldPhotoPath) && File::exists($oldPhotoPath)) {
+                File::delete($oldPhotoPath);
+                File::delete($oldThumbnailPhotoPath);
+            }
+
+            return redirect()->route('film.index')->with('status', 'Data updated successfully!');
+          } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+          }
     }
 
     /**
@@ -155,7 +267,7 @@ class FilmController extends Controller
           return response()->json([]);
         } catch (\Exception $e) {
           DB::rollBack();
-          return response()->json([]);
+          return response()->json([], $e->getStatusCode());
         }
     }
 }
