@@ -47,7 +47,7 @@
               <label for="permissions">Genres</label>
               @foreach($genres as $val)
                 <br />
-                <input id="{{ $val->name }}" {!! (in_array($val->id, $film->genres->pluck('id')->toArray())) ? "checked='checked'" : "" !!} class="minimal" type="checkbox" name="genres[]" value="{{ $val->id }}" /> <label for="{{ $val->name }}" style="font-weight: normal">{{ $val->name }}</label>
+                <input id="{{ $val->name }}" {!! (isset($film) && in_array($val->id, $film->genres->pluck('id')->toArray())) ? "checked='checked'" : "" !!} class="minimal" type="checkbox" name="genres[]" value="{{ $val->id }}" /> <label for="{{ $val->name }}" style="font-weight: normal">{{ $val->name }}</label>
               @endforeach
             </div>
           <div class="form-group">
